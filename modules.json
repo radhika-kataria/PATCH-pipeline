@@ -1,0 +1,38 @@
+{
+    "name": "meteor-nf",
+    "homePage": "https://github.com/theoportlock/meteor_pipeline",
+    "repos": {
+        "nf-core/modules": {
+            "blast/blastn": {
+                "git_sha": "c5235a983d454787fa0c3247b02086969217163b"
+            },
+            "bwa/mem": {
+                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
+            },
+            "fastqc": {
+                "git_sha": "ab67a1d41b63bf52fd7c147f7f8f6e8d167590b5"
+            },
+            "kraken2/kraken2": {
+                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
+            },
+            "samtools/fastq": {
+                "git_sha": "c5235a983d454787fa0c3247b02086969217163b"
+            },
+            "samtools/sort": {
+                "git_sha": "c5235a983d454787fa0c3247b02086969217163b"
+            },
+            "samtools/view": {
+                "git_sha": "c5235a983d454787fa0c3247b02086969217163b"
+            },
+            "seqtk/subseq": {
+                "git_sha": "e937c7950af70930d1f34bb961403d9d2aa81c7d"
+            },
+            "spades": {
+                "git_sha": "c5235a983d454787fa0c3247b02086969217163b"
+            },
+            "trimgalore": {
+                "git_sha": "c5235a983d454787fa0c3247b02086969217163b"
+            }
+        }
+    }
+}
