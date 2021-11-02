@@ -1,6 +1,6 @@
 # PAThogen CHaracterisation (PATCH) pipeline
 
-PATCH pipeline implementation [Nextflow][url_nextflow] pipeline for processing host transcriptomic and genomic sequencing data.
+PATCH pipeline implementation [Nextflow][url_nextflow] pipeline for processing host transcriptomic and genomic sequencing data to identify pathogen-derived reads to a functional level in cancer datasets.
 
 The pipeline was written by the [Cancer Bioinformatics][url_cb] and [Translational Systems Biology][url_sb] group at [King's College London][url_kcl], UK.
 
