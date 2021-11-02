@@ -20,17 +20,6 @@ The pipeline was written by the [Cancer Bioinformatics][url_cb] and [Translation
 5. As before - classified reads from the pathogen of interest are extracted and functionally annotated using [`BLASTn`](https://www.ncbi.nlm.nih.gov/books/NBK279690/) against indexed RefSeq for transcripts/genomes of the pathogen of interest. 
 6. Discordant read coordinates extracted ([`Bedtools`](https://bedtools.readthedocs.io/en/latest/))  
 
-## Documentation
-
-The documentation for the pipeline can be found in the `docs/` directory:
-
-1. [Installation](docs/install.md)
-2. [Design file](docs/design.md)
-3. [Pipeline configuration](docs/config.md)
-4. [Running the pipeline](docs/usage.md)
-5. [Output and interpretation of results](docs/output.md)
-6. [Troubleshooting](docs/troubleshooting.md)
-
 ## Credits
 
 The pipeline was written by the [Cancer Bioinformatics][url_cb] and [Translational Systems Biology][url_sb] group at [King's College London][url_kcl], UK.
