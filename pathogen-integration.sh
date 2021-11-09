@@ -16,6 +16,13 @@ module load apps/openjdk
 module load apps/trimmomatic/0.39
 module load apps/fastqc/0.11.8
 
+mkdir index 
+##required input host and pathogen reference genomes
+cat host_genome.fa pathogen_genome.fa > combined_ref.fa
+bwa index -a bwtsw index/combined_ref.fa
+grep -e '>' pathogen_genome.fa > index/labels.txt
+grep -e '>' host_genome.fa > index/labels.txt
+
 #Convert bam to fastq
 export bam2fq=/scratch/users/k1802884/tools/biobambam2/2.0.87-release-20180301132713/x86_64-etch-linux-gnu/bin/bamtofastq 
 bam=$(echo *.bam)
@@ -59,19 +66,46 @@ fq2=*_trimmed_F2.fq.gz
 mkdir discordant
 bwa mem /scratch/users/k1802884/ensembl/dna/index/combined.fa ${fq1} ${fq2} -t 10 | samtools sort -o discordant/fuso_human_sorted.bam - 
 
-#Extract discordant reads
+#Extract discordant reads with MAPQ>20
 samtools view -F 14 -h -q 20 discordant/fuso_human_sorted.bam -@ 10 > discordant/discordant.bam
 
 #remove duplicate reads
 java -jar /scratch/users/k1802884/azure/radhika/tools/picard.jar MarkDuplicates \
-      I=discordant/discordant.bam \
-      O=discordant/discordant_remove_duplicates.bam \
-      M=discordant/marked_dup_metrics.txt \
+      I=chr9_out.bam \
+      O=chr9_rmdup.bam \
+      M=chr9_marked_dup_metrics.txt \
       REMOVE_DUPLICATES=true
 
 #get pathogen-human discordant reads
 samtools view discordant/discordant_remove_duplicates.bam| grep -f pathogen_fasta_headers.txt | awk '{for(i=7;i<=NF;i++){if($i~/^NC=/){a=$i}} print $0,a}' > discordant/discordant_host_pathogen_reads.txt
 awk '{print $1}' discordant/discordant_host_pathogen_reads.txt > discordant/discordant_readname_extract.txt
 #Extract co-ordinates
-bedtools bamtobed -i discordant/discordant_remove_duplicates.bam  | grep -f discordant/discordant_readname_extract.txt > discordant/coordinates.txt
+
+cd discordant
+
+mkdir coordinates
+cd coordinates
+
+# Extract reads where R1 maps to pathogen and R2 maps to host
+samtools view ../discordant_remove_duplicates.bam | awk -F '\t' 'BEGIN { split("", a) } NR == FNR { a[$0] = 1; next } $3  in a' /scratch/users/k1802884/ensembl/dna/index/pathogen_headers.txt - | awk -F '\t' 'BEGIN { split("", a) } NR == FNR { a[$0] = 1; next } $7  in a' /scratch/users/k1802884/ensembl/dna/index/host_headers.txt - >> discordant_host_pathogen.txt
+## Extract reads where R1 maps to host and R1 maps to pathogen
+samtools view ../discordant_remove_duplicates.bam | awk -F '\t' 'BEGIN { split("", a) } NR == FNR { a[$0] = 1; next } $7  in a' /scratch/users/k1802884/ensembl/dna/index/pathogen_headers.txt - | awk -F '\t' 'BEGIN { split("", a) } NR == FNR { a[$0] = 1; next } $3  in a' /scratch/users/k1802884/ensembl/dna/index/host_headers.txt - >> discordant_host_pathogen.txt
+
+#Print readnames of discordant reads
+awk '{print $1}' discordant_host_pathogens.txt > discordant_readnames.txt
+
+#Use bedtools to generate bed file of discordant reads to extract their loci
+bedtools bamtobed -i ../discordant_remove_duplicates.bam  | grep -f discordant_readnames.txt > coordinates.txt
+
+#Filter/take forward only reads which are properly paired
+awk '{print $4}' coordinates.txt | sed 's/..$//'| sort | uniq -c | awk '$1>1' | awk '{print $2}' | grep -f - coordinates.txt > coordinates_properly_paired.txt
+grep -f host_headers.txt coordinates_properly_paired.txt | awk '{print $4}' | sed 's/..$//' | sort | uniq -c | awk '{print $2}' > host_reads.txt
+grep -f pathogen_headers.txt coordinates_properly_paired.txt | grep -f host_reads.txt - > pathogen_reads.txt
+awk '{print $4}' pathogen_reads.txt | sed 's/..$//' > pathogen_readname.txt
+grep -f host_reads.txt coordinates_properly_paired.txt| grep -f pathogen_readname.txt - > host_reads_only.txt
+cat fuso_reads_only.txt human_reads_only.txt > filtered_coordinates.txt
+awk '!a[$4]++' filtered_coordinates.txt > pathogen_host_discordant_reads_output.txt
+
+
+
 
