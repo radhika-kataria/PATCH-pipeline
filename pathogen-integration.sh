@@ -104,7 +104,7 @@ awk '{print $4}' coordinates.txt | sed 's/..$//'| sort | uniq -c | awk '$1>1' | 
 grep -f index/host_headers.txt coordinates_properly_paired.txt | awk '{print $4}' | sed 's/..$//' | sort | uniq -c | awk '{print $2}' > host_reads.txt
 grep -f index/pathogen_headers.txt coordinates_properly_paired.txt | grep -f host_reads.txt - > pathogen_reads.txt
 awk '{print $4}' pathogen_reads.txt | sed 's/..$//' > pathogen_readname.txt
-grep -f host_reads.txt coordinates_properly_paired.txt| grep -f pathogen_readname.txt - > host_reads.txt
+grep -f index/host_headers.txt coordinates_properly_paired.txt| grep -f pathogen_readname.txt - > host_reads.txt
 cat host_reads.txt pathogen_reads.txt > filtered_coordinates.txt
 awk '!a[$4]++' filtered_coordinates.txt > pathogen_host_discordant_reads_output.txt
 
