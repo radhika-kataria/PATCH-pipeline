@@ -20,8 +20,10 @@ mkdir index
 ##required input host and pathogen reference genomes
 cat host_genome.fa pathogen_genome.fa > combined_ref.fa
 bwa index -a bwtsw index/combined_ref.fa
-grep -e '>' pathogen_genome.fa > index/labels.txt
-grep -e '>' host_genome.fa > index/labels.txt
+
+#These outpust will be used for downstream extraction of discordant reads
+grep -e '>' pathogen_genome.fa > index/pathogen_headers.txt
+grep -e '>' host_genome.fa > index/host_headers.txt
 
 #Convert bam to fastq
 export bam2fq=/scratch/users/k1802884/tools/biobambam2/2.0.87-release-20180301132713/x86_64-etch-linux-gnu/bin/bamtofastq 
@@ -99,11 +101,11 @@ bedtools bamtobed -i ../discordant_remove_duplicates.bam  | grep -f discordant_r
 
 #Filter/take forward only reads which are properly paired
 awk '{print $4}' coordinates.txt | sed 's/..$//'| sort | uniq -c | awk '$1>1' | awk '{print $2}' | grep -f - coordinates.txt > coordinates_properly_paired.txt
-grep -f host_headers.txt coordinates_properly_paired.txt | awk '{print $4}' | sed 's/..$//' | sort | uniq -c | awk '{print $2}' > host_reads.txt
-grep -f pathogen_headers.txt coordinates_properly_paired.txt | grep -f host_reads.txt - > pathogen_reads.txt
+grep -f index/host_headers.txt coordinates_properly_paired.txt | awk '{print $4}' | sed 's/..$//' | sort | uniq -c | awk '{print $2}' > host_reads.txt
+grep -f index/pathogen_headers.txt coordinates_properly_paired.txt | grep -f host_reads.txt - > pathogen_reads.txt
 awk '{print $4}' pathogen_reads.txt | sed 's/..$//' > pathogen_readname.txt
-grep -f host_reads.txt coordinates_properly_paired.txt| grep -f pathogen_readname.txt - > host_reads_only.txt
-cat fuso_reads_only.txt human_reads_only.txt > filtered_coordinates.txt
+grep -f host_reads.txt coordinates_properly_paired.txt| grep -f pathogen_readname.txt - > host_reads.txt
+cat host_reads.txt pathogen_reads.txt > filtered_coordinates.txt
 awk '!a[$4]++' filtered_coordinates.txt > pathogen_host_discordant_reads_output.txt
 
 
