@@ -24,7 +24,7 @@ The pipeline was written by the [Cancer Bioinformatics][url_cb] and [Translation
 
 The pipeline was written by the [Cancer Bioinformatics][url_cb] and [Translational Systems Biology][url_sb] group at [King's College London][url_kcl], UK.
 
-Pipeline development and implementation by [Radhika Kataria](radhika.kataria@kcl.ac.uk), [Jelmar Quist](jelmar.quist@kcl.ac.uk), [Anargyros Megalios](argymeg@gmail.com), [Thomas Hardiman](thomas.hardiman@kcl.ac.uk), [Theo Portlock](theo.portlock@kcl.ac.uk) and [Sunjae Lee](sunjae.lee@kcl.ac.uk). 
+Pipeline development and implementation by [Radhika Kataria](radhika.kataria@kcl.ac.uk).
 
 Study concept and design [Radhika Kataria](radhika.kataria@kcl.ac.uk), [Anita Grigoriadis](anita.grigoriadis@kcl.ac.uk), [Saeed Shoaie](saeed.shoaie@kcl.ac.uk)
 
